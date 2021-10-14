@@ -12,7 +12,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.acmvit.gitpositive.R
 import org.acmvit.gitpositive.remote.model.Repository
 
-class RepositoryAdapter(private val dataSet: MutableList<Repository>) :
+class RepositoryAdapter(private val dataSet: List<Repository>) :
     RecyclerView.Adapter<RepositoryAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {

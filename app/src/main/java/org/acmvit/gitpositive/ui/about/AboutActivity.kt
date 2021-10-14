@@ -20,16 +20,16 @@ class AboutActivity : AppCompatActivity() {
         val backFab = findViewById<FloatingActionButton>(R.id.back)
         val shareFab = findViewById<FloatingActionButton>(R.id.share)
         appName.text = Html.fromHtml(getColorStr("Git", "#6CFF54") + getColorStr("Positive", getColor(R.color.text_color).toString()))
-        backFab.setOnClickListener({
+        backFab.setOnClickListener {
             onBackPressed()
-        })
-        shareFab.setOnClickListener({
+        }
+        shareFab.setOnClickListener {
             val intent = Intent()
             intent.action = Intent.ACTION_SEND
             intent.type = "text/plain"
             intent.putExtra(Intent.EXTRA_TEXT, message)
             startActivity(Intent.createChooser(intent, "GitPositive"))
-        })
+        }
 
     }
 }

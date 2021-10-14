@@ -1,75 +1,92 @@
 package org.acmvit.gitpositive.ui.repository
 
-import android.content.Context
 import android.os.Bundle
 import android.text.Html
-import android.widget.TextView
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.android.volley.Request
-import com.android.volley.toolbox.JsonArrayRequest
-import com.android.volley.toolbox.Volley
-import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import dagger.hilt.android.AndroidEntryPoint
 import org.acmvit.gitpositive.R
-import org.acmvit.gitpositive.remote.model.Repository
+import org.acmvit.gitpositive.databinding.BottomFollowersBinding
 import org.acmvit.gitpositive.util.getColorStr
-import org.json.JSONObject
 
-class RepositoryDialog(context: Context, userName: String) : BottomSheetDialog(context) {
+@AndroidEntryPoint
+class RepositoryDialog : BottomSheetDialogFragment() {
 
-    val url = "https://api.github.com/users/$userName/repos?per_page=100"
-    var repositoryList = mutableListOf<Repository>()
+    private val viewModel: RepositoryViewModel by viewModels()
 
-    private var layoutManager: RecyclerView.LayoutManager? = LinearLayoutManager(this.context)
-    var adapter: RecyclerView.Adapter<RepositoryAdapter.ViewHolder>? =
-        RepositoryAdapter(repositoryList)
+    private var _binding: BottomFollowersBinding? = null
+    private val binding: BottomFollowersBinding
+        get() {
+            return _binding!!
+        }
 
+    private var _view: View? = null
 
-    init {
-        setContentView(R.layout.bottom_followers)
+    companion object {
+        private const val KEY_USERNAME = "userName"
+
+        fun newInstance(userName: String) = RepositoryDialog().apply {
+            arguments = Bundle().apply {
+                putString(KEY_USERNAME, userName)
+            }
+        }
+
     }
 
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        if (_view == null) {
+            _binding = BottomFollowersBinding.inflate(inflater, container, false)
+            _view = binding.view
+        }
+        return _view
+    }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        findViewById<TextView>(R.id.bottom_top)!!.text = Html.fromHtml(
-            getColorStr("Your ", "#6CFF54") + getColorStr(
-                "Repositories",
-                this.context.getColor(R.color.text_color).toString()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        with(binding) {
+            bottomTop.text = Html.fromHtml(
+                getColorStr("Your ", "#6CFF54") + getColorStr(
+                    "Repositories",
+                    this@RepositoryDialog.context?.getColor(R.color.text_color).toString()
+                )
             )
-        )
-        val repoRecyclerView = findViewById<RecyclerView>(R.id.recyclerView)
-        repoRecyclerView?.adapter = adapter
-        repoRecyclerView?.layoutManager = layoutManager
-        val mQueue = Volley.newRequestQueue(this.context)
-        val request = JsonArrayRequest(
-            Request.Method.GET, url, null, { response ->
-                for (i in 0 until response.length()) {
-                    val repo: JSONObject = response.getJSONObject(i)
-                    val name = repo["name"].toString()
-                    val html_url = repo["html_url"].toString()
-                    val description = repo["description"].toString()
-                    val language = repo["language"].toString()
-                    val stars = repo["stargazers_count"]
-                    val forks_count = repo["forks_count"]
-
-                    val repoData = Repository(
-                        name,
-                        html_url,
-                        description,
-                        language,
-                        stars as Int, forks_count as Int
-                    )
-                    repositoryList.add(repoData)
-                }
-                adapter?.notifyDataSetChanged()
-
-            }, { error ->
-                Toast.makeText(this.context, error.message, Toast.LENGTH_SHORT).show()
-            })
-        mQueue.add(request)
+        }
+        observeFollowingList()
+        viewModel.getUserRepositories(this.arguments?.getString(KEY_USERNAME, "").orEmpty())
     }
 
+    private fun observeFollowingList() {
+        viewModel.viewState.observe(viewLifecycleOwner) {
+            it?.let { viewState ->
+                when (viewState) {
+                    is RepositoryViewModel.ViewState.Error -> showToast(viewState.message)
+                    RepositoryViewModel.ViewState.Loading -> {}
+                    is RepositoryViewModel.ViewState.Success -> {
+                        with(binding.recyclerView) {
+                            layoutManager = LinearLayoutManager(this@RepositoryDialog.context)
+                            adapter = RepositoryAdapter(viewState.followingList)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(this.context, message, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun dismiss() {
+        super.dismiss()
+        _view = null
+    }
 }

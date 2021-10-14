@@ -13,17 +13,18 @@ import com.bumptech.glide.Glide
 import org.acmvit.gitpositive.R
 import org.acmvit.gitpositive.remote.model.Following
 
-class FollowingAdapter(private val dataSet: MutableList<Following>) :
+class FollowingAdapter(private val dataSet: List<Following>) :
     RecyclerView.Adapter<FollowingAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val name : TextView = view.findViewById(R.id.name)
-        val image : ImageView = view.findViewById(R.id.userImage)
-        val clickMe : CardView = view.findViewById(R.id.clickMe)
+        val name: TextView = view.findViewById(R.id.name)
+        val image: ImageView = view.findViewById(R.id.userImage)
+        val clickMe: CardView = view.findViewById(R.id.clickMe)
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(viewGroup.context).inflate(R.layout.follower_following_layout, viewGroup, false)
+        val view = LayoutInflater.from(viewGroup.context)
+            .inflate(R.layout.follower_following_layout, viewGroup, false)
         return ViewHolder(view)
     }
 
@@ -42,6 +43,7 @@ class FollowingAdapter(private val dataSet: MutableList<Following>) :
             viewHolder.clickMe.context.startActivity(browserIntent)
         }
     }
+
     override fun getItemCount() = dataSet.size
 
 }

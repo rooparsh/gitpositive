@@ -2,8 +2,6 @@ package org.acmvit.gitpositive.ui.main
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.VibrationEffect
-import android.os.Vibrator
 import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
@@ -27,6 +25,9 @@ import org.acmvit.gitpositive.util.getColorStr
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var userName: String
+
     private val viewModel by viewModels<MainViewModel>()
     private var _binding: ActivityMainBinding? = null
     private val binding: ActivityMainBinding
@@ -50,6 +51,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         showLoadingDialog()
         observeViewState()
+        userName = intent.getStringExtra("Username").toString()
         binding.appName.text = Html.fromHtml(
             getColorStr("Git", "#6CFF54") + getColorStr(
                 "Positive", getColor(
@@ -80,7 +82,7 @@ class MainActivity : AppCompatActivity() {
             doVibration()
             val message = "Hey!! Follow me on GitHub with the given link " +
                     "and don't forget to star my repositories \n" +
-                    "https://github.com/" + intent.getStringExtra("Username").toString()
+                    "https://github.com/" + userName
             val intent = Intent()
             intent.action = Intent.ACTION_SEND
             intent.type = "text/plain"
@@ -93,7 +95,7 @@ class MainActivity : AppCompatActivity() {
             doVibration()
         }
 
-        viewModel.getUserData(intent.getStringExtra("Username").toString())
+        viewModel.getUserData(userName)
     }
 
     override fun onResume() {
@@ -112,18 +114,20 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun followersBottomSheet() {
-        val followerDialog = FollowerDialog(this, intent.getStringExtra("Username").orEmpty())
-        followerDialog.show()
+        val followerDialog = FollowerDialog.newInstance(userName)
+        followerDialog.show(supportFragmentManager, "FOLLOWERS")
     }
 
     private fun followingBottomSheet() {
-        val followingDialog = FollowingDialog(this, intent.getStringExtra("Username").orEmpty())
-        followingDialog.show()
+        val followingDialog =
+            FollowingDialog.newInstance(userName)
+        followingDialog.show(supportFragmentManager, "FOLLOWING")
     }
 
     private fun repositoriesBottomSheet() {
-        val repoDialog = RepositoryDialog(this, intent.getStringExtra("Username").orEmpty())
-        repoDialog.show()
+        val repoDialog =
+            RepositoryDialog.newInstance(userName)
+        repoDialog.show(supportFragmentManager, "REPOSITORY")
     }
 
     private fun observeViewState() {

@@ -13,7 +13,7 @@ import com.bumptech.glide.Glide
 import org.acmvit.gitpositive.R
 import org.acmvit.gitpositive.remote.model.Follower
 
-class FollowersAdapter(private val dataSet: MutableList<Follower>) :
+class FollowersAdapter(private val dataSet: List<Follower>) :
     RecyclerView.Adapter<FollowersAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
