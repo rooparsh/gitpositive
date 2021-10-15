@@ -45,7 +45,10 @@
         <entry key="..\:/Users/siddh/OneDrive/Desktop/gitpositive/app/src/main/res/layout/bottom_followers.xml" value="0.2388888888888889" />
         <entry key="app/src/main/res/layout/activity_home_screen.xml" value="0.22" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.22" />
+        <entry key="app/src/main/res/layout/bottom_followers.xml" value="0.1925925925925926" />
         <entry key="app/src/main/res/layout/bottom_following.xml" value="0.20277777777777778" />
+        <entry key="app/src/main/res/layout/bottom_repositories.xml" value="0.16574074074074074" />
+        <entry key="app/src/main/res/layout/follower_following_layout.xml" value="0.16574074074074074" />
       </map>
     </option>
   </component>

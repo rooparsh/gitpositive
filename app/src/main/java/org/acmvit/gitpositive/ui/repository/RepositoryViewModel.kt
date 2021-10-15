@@ -35,7 +35,7 @@ class RepositoryViewModel @Inject constructor(
             try {
                 val repoList = retrofit.getReposForUser(username = username)
                 _repoList.value = repoList.toList()
-                _viewState.value = ViewState.Success(repoList.map {
+                _viewState.postValue(ViewState.Success(repoList.map {
                     Repository(
                         it.name.orEmpty(),
                         it.html_url,
@@ -44,10 +44,10 @@ class RepositoryViewModel @Inject constructor(
                         it.stargazers_count,
                         it.forks_count
                     )
-                })
+                }))
             } catch (e: Exception) {
                 Log.e("RepositoryViewModel", e.message.toString())
-                _viewState.value = ViewState.Error(e.message.toString())
+                _viewState.postValue(ViewState.Error(e.message.toString()))
             }
         }
     }

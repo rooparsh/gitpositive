@@ -115,19 +115,19 @@ class MainActivity : AppCompatActivity() {
 
     private fun followersBottomSheet() {
         val followerDialog = FollowerDialog.newInstance(userName)
-        followerDialog.show(supportFragmentManager, "FOLLOWERS")
+        followerDialog.show(supportFragmentManager, followerDialog.tag)
     }
 
     private fun followingBottomSheet() {
         val followingDialog =
             FollowingDialog.newInstance(userName)
-        followingDialog.show(supportFragmentManager, "FOLLOWING")
+        followingDialog.show(supportFragmentManager, followingDialog.tag)
     }
 
     private fun repositoriesBottomSheet() {
         val repoDialog =
             RepositoryDialog.newInstance(userName)
-        repoDialog.show(supportFragmentManager, "REPOSITORY")
+        repoDialog.show(supportFragmentManager, repoDialog.tag)
     }
 
     private fun observeViewState() {
